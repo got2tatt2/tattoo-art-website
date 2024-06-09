@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>John's Tattoo Art</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 1rem;
+            background: #222;
+            margin-top: 1rem;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .bio {
+            margin-bottom: 2rem;
+        }
+        .bio h2 {
+            margin-bottom: 1rem;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .gallery img {
+            margin: 0.5rem;
+            border: 2px solid #fff;
+            cursor: pointer;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Created Tattoo Art</h1>
+    </header>
+    <div class="container">
+        <section class="bio">
+            <h2>Welcome!</h2>
+            <p>Hi I'm John, a seasoned tattoo artist with 35 years of experience under my belt. I've had the privilege of inking clients in some of the most vibrant cities across the country. My journey has taken me from the eclectic streets of Houston and Austin to the dazzling lights of Las Vegas and Hollywood, the sun-soaked boardwalks of Venice Beach, and the charming locales of Jacksonville, NC.</p>
+            <p>My passion for tattooing goes beyond just creating art on skin; it’s about crafting stories and memories that my clients carry with them forever. Whether you're looking for a classic design or something more adventurous, but this website isn't about me.</p>
+            <p>In this website you'll find a treasure trove of new, unused tattoo reference art, all developed with my expert eye for detail. By harnessing the power of AI, I've created a unique collection of tattoo images that artists can pull from, ensuring they always have fresh, inspiring designs at their fingertips.</p>
+        <section class="social">
+            <h2>Connect with Me</h2>
+            <a href="https://www.instagram.com/tatt2jmc/" target="_blank">More on Instagram</a>
+        </section>
+        </section>
+        <section class="gallery" id="gallery">
+            <h2>Gallery</h2>
+            <!-- Images will be dynamically added here -->
+        </section>
+        
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <script>
+        // Function to dynamically load images from the "images" folder
+        function loadImages() {
+            const gallery = document.getElementById('gallery');
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'jfif'];
+
+            fetch('./images/')
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, 'text/html');
+                    const imageElements = doc.querySelectorAll('a');
+
+                    imageElements.forEach(element => {
+                        const href = element.getAttribute('href');
+                        const extension = href.split('.').pop().toLowerCase();
+                        
+                        if (imageExtensions.includes(extension)) {
+                            const img = document.createElement('img');
+                            img.src = `images/${href}`;
+                            img.alt = href;
+                            gallery.appendChild(img);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading images:', error));
+        }
+
+        // Function to open modal
+        function openModal() {
+            const modal = document.getElementById('myModal');
+            const modalImg = document.getElementById('img01');
+            const images = document.querySelectorAll('.gallery img');
+            const closeBtn = document.querySelector('.close');
+
+            images.forEach(image => {
+                image.onclick = function() {
+                    modal.style.display = 'block';
+                    modalImg.src = this.src;
+                };
+            });
+
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            modal.onclick = function() {
+                modal.style.display = 'none';
+            };
+        }
+
+        // Load images and initialize modal when the page loads
+        window.onload = function() {
+            loadImages();
+            openModal();
+        };
+    </script>
+</body>
+</html>
